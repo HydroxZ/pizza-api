@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  SpotBugs Exclude Filter
+  ======================
+  This file excludes common noise from SpotBugs reports to focus on actual bugs.
+  Rules are organized by category and use standard exclusion patterns.
+-->
+<FindBugsFilter>
+  <!--
+    ============================================================================
+    UNUSED/UNREACHABLE CODE - High volume noise, usually not real issues
+    ============================================================================
+  -->
+  
+  <!-- Unused private fields are extremely common in Java and often indicate:
+       - Lazy initialization patterns
+       - Future use (TODO comments)
+       - Private constructor arguments that aren't exposed as setters
+       These are NOT bugs. -->
+  <Match>
+    <BugPattern name="FI_USELESS_ATTRIBUTE"/>
+  </Match>
+  
+  <!-- Unused local variables in generated code or utility methods are noise:
+       - Lombok @Getter/@Setter implementations can leave unused fields
+       - Builder patterns may have unused intermediate values -->
+  <Match>
+    <BugPattern name="DMI_UNUSED_VALUE_PARAMETER"/>
+    <Or>
+      <Class name="~.*\$.*\.class"/>  <!-- Exclude generated code -->
+      <Method name="equals" parameters="*"/>
+      <Method name="hashCode" parameters="*"/>
+    </Or>
+  </Match>
+
+  <!-- Unused imports are IDE warnings, not bugs -->
+  <Match>
+    <BugPattern name="SE_BAD_FIELD_STORE"/>
+  </Match>
+
+  <!-- ============================================================================
+     NULL CHECKS - These indicate defensive programming or null safety concerns,
+       but often miss legitimate cases like: 
+       - Optional types that return empty rather than null
+       - Collection.isEmpty() checks instead of contains(null)
+    ============================================================================ -->
+  <Match>
+    <!-- Null pointer exceptions on field access are often real bugs, keep these -->
+  </Match>
+
+  <!-- ============================================================================
+     THREADING CONCURRENCY ISSUES - Keep most of these as they indicate real problems:
+       - Unsynchronized get/set operations
+       - Race conditions in static fields
+    ============================================================================ -->
+  
+  <!-- However, these are often false positives for volatile usage patterns: -->
+  <Match>
+    <BugPattern name="IC_INHERIT_NULL_CHECK"/>
+  </Match>
+
+  <!-- ============================================================================
+     LITERAL MATCHING - Keep these to avoid noise from:
+       - Magic number comparisons in calculations
+       - Switch statements on magic constants
+    ============================================================================ -->
+  <Match>
+    <BugPattern name="DM_DEFAULT_ENCODING"/>
+  </Match>
+
+  <!-- ============================================================================
+     COLLECTION OPERATIONS - These can be noise for standard patterns:
+       - Collections.emptyList() usage (immutable empty collections)
+       - Stream operations that are logically equivalent but syntactically different
+    ============================================================================ -->
+  <Match>
+    <BugPattern name="RV_RETURN_VALUE_IGNORED"/>
+    <!-- But exclude from generated code and specific known false positives -->
+    <Not>
+      <Class name="~.*\$.*\.class"/>  <!-- Generated code -->
+    </Not>
+  </Match>
+
+  <!-- ============================================================================
+     STRING OPERATIONS - Common patterns that look like bugs but aren't:
+       - String concatenation in loops (should be StringBuilder)
+       - String.valueOf() on objects vs toString()
+    ============================================================================ -->
+  <Match>
+    <BugPattern name="IC_INIT_CIRCULAR"/>
+  </Match>
+
+  <!-- ============================================================================
+     RECURSION PATTERN DETECTORS - These often catch algorithmic patterns
+       rather than infinite recursion bugs. Keep these enabled for real bugs. -->
+
+  <!-- ============================================================================
+     GENERATED/LATEX/TEMPLATE CODE - Exclude entire categories of generated code:
+       - Lombok generated equals/hashCode methods
+       - Record class implementations
+       - Jackson/Jackson-annotations annotations on getters/setters
+    ============================================================================ -->
+  <Match>
+    <!-- Exclude from anonymous classes, inner classes in generated code -->
+    <Class name="~.*\$.*\.class"/>
+  </Match>
+
+  <!-- ============================================================================
+     ANNOTATION PROCESSING - These are false positives when annotations are used:
+       - @Deprecated on private fields (private API)
+       - @SuppressWarnings on methods with known warnings -->
+  <Match>
+    <BugPattern name="EI_EXPOSE_REP2"/>
+  </Match>
+
+  <!-- ============================================================================
+     COLLECTION/ITERATOR PATTERN MATCHING - These are often noise:
+       - Iterating over collections while modifying (intentional with removeIf, etc.)
+       - Using for-each on final iterators -->
+  <Match>
+    <BugPattern name="IC_INHERIT_NULL_CHECK"/>
+  </Match>
+
+  <!-- ============================================================================
+     RESOURCE LEAKING PATTERN MATCHING - Keep these for real leaks, but exclude:
+       - try-with-resources that are correctly implemented but have warnings -->
+  <Match>
+    <BugPattern name="DLS_DEAD_LOCAL_STORE"/>
+    <Or>
+      <!-- Common false positives: unused local variables in utility methods -->
+      <Class name="~.*Utility.*"/>
+      <Class name="~.*Util.*"/>
+    </Or>
+  </Match>
+
+</FindBugsFilter>

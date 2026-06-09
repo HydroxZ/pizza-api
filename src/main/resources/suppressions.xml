@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle.org//DTD SuppressionFilter 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+<suppressions>
+	<!-- Exclude generated test code from checkstyle checks -->
+	<suppress checks=".*" files="generated/test/.*"/>
+	<!-- Exclude standard library imports -->
+	<suppress checks="JavadocMethod" id=".*" files="java\.util$/.*$|java\.lang$/.*$|java\.io$/.*$|java\.net$/.*$|java\.sql$/.*$|javax\.annotation$/.*$|org\/springframework\/*.jar$|log4j\/*.jar$|slf4j\/*.jar$"/>
+</suppressions>

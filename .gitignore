@@ -1,0 +1,182 @@
+# =====================================================
+# Pizza API Project - Comprehensive .gitignore
+# Spring Boot Maven project with Node module support
+# =====================================================
+
+# =====================================================
+# BUILD ARTIFACTS & COMPILATION
+# =====================================================
+
+# Maven build directory (contains compiled classes, JARs)
+target/
+*.jar
+*.war
+*.ear
+!target/pom.xml
+!.mvn/*.xml  # Keep POM files in root .m2
+
+# Compiled class files (OS temp artifacts)
+*.class
+*.cls
+
+# =====================================================
+# IDE & EDITOR FILES
+# =====================================================
+
+# IntelliJ IDEA projects and caches (optional but recommended)
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+.settings/
+.hg/
+.project
+.classpath
+bin/
+*.swp
+*.swo
+*~
+dw.
+.cache
+local.properties
+
+# Visual Studio Code settings and caches (optional)
+.vscode/
+.DS_Store
+Thumbs.db
+
+# VS Code extensions cache
+vscode-extension-cache-v*/
+
+# =====================================================
+# MAVEREN WRAPPER & LOCAL CACHE
+# =====================================================
+
+# Maven wrapper local repository cache
+.mvn/wrapper/maven-wrapper.jar
+~/.m2/repository/
+!~/.m2/settings.xml  # Keep settings if needed
+
+# Local Maven cache (optional - uncomment if desired)
+# .npm/
+# node_modules/
+
+# =====================================================
+# NODE MODULES & PACKAGE FILES (if used)
+# =====================================================
+
+# Node modules and locks (uncomment if project uses Node.js)
+node_modules/
+npm-debug.log
+yarn-error.log
+package-lock.json  # Keep this for reproducible builds, or remove line to exclude
+npm-shrinkwrap.json
+.yarn-integrity
+.pnp.js
+.pnp.loader.mjs
+
+# =====================================================
+# LOG FILES & RUNTIME DATA
+# =====================================================
+
+# Application logs (prevent accidental commits)
+logs/
+*.log
+build.log
+maven-build.log
+system.out
+
+# Container/Docker related
+.docker/
+*.pid  # Process ID files common in Java apps
+
+# =====================================================
+# TESTING & COVERAGE
+# =====================================================
+
+# JUnit coverage reports (optional)
+coverage/
+reports/jacoco/
+target/site/jacoco/
+
+# Surefire/Integration test reports
+surefire-reports/
+test-results/
+target/test-*.xml
+
+# =====================================================
+# SCALING & MONITORING
+# =====================================================
+
+# Application performance monitoring (APM) agent logs and data files
+app-agent-data/
+agent-logs/
+datadog/
+elasticapm/
+ewrelic/
+splunk-hec-agent/
+terminus/
+zipkin/
+zipkin-local/
+
+# =====================================================
+# SECURITY & SENSITIVE DATA
+# =====================================================
+
+# Environment-specific files (DO NOT COMMIT)
+.git-credentials
+.jvmopts
+.env  # Keep .env in .gitignore or use .env.local pattern
+.target/
+target/
+
+# =====================================================
+# OS-SPECIFIC FILES
+# =====================================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+*.cab
+desktop.ini
+$RECYCLE.BIN/
+previews/  # Windows thumbnail cache
+hfsng.dat
+hfsplus.dat
+com.docker.vmnetd.pid
+
+# macOS/Darwin
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Volume_icon.icns
+.AppleDouble
+Network Trash Folder
+Temporary Items
+desktop.ini
+
+# =====================================================
+# MISCELLANEOUS
+# =====================================================
+
+# Backup files
+*.bak
+*.backup
+*.swp  # Vim/Swift backup (duplicate above but explicit)
+*.tmp
+*.temp
+.temp/
+tmp/
+
+# Temporary directories created by IDEs or tools
+.cache/
+.tmp/
+TEMP/
+
