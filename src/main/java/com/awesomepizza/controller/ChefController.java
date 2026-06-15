@@ -2,75 +2,53 @@ package com.awesomepizza.controller;
 
 import com.awesomepizza.domain.Order;
 import com.awesomepizza.domain.OrderStatus;
-import com.awesomepizza.repository.OrderRepository;
+import com.awesomepizza.service.OrderService;
+import com.awesomepizza.service.QueueManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * REST Controller for chef-facing queue management APIs.
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/chef")
 public class ChefController {
 
-    private final OrderRepository orderRepository;
+    private final QueueManager queueManager;
+    private final OrderService orderService;
 
     @Autowired
-    public ChefController(OrderRepository orderRepository) {
-        this.orderRepository = orderRepository;
+    public ChefController(QueueManager queueManager, OrderService orderService) {
+        this.queueManager = queueManager;
+        this.orderService = orderService;
     }
 
     /**
-     * Update order status (move to cooking or mark ready).
+     * View the pending order queue (FIFO).
      */
-    @PatchMapping("/orders/{orderId}")
-    public ResponseEntity<Void> updateOrderStatus(@PathVariable Long orderId,
-            @RequestBody OrderStatusRequest request) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found: " + orderId));
-
-        // Validate transition
-        if (!isValidTransition(order.getStatus(), request.getStatus())) {
-            return ResponseEntity.badRequest().body(null);
-        }
-
-        order.setStatus(request.getStatus());
-        orderRepository.save(order);
-
-        return ResponseEntity.ok().build();
+    @GetMapping("/queue")
+    public ResponseEntity<List<Order>> getQueue() {
+        return ResponseEntity.ok(queueManager.getPendingQueue());
     }
 
     /**
-     * Request DTO for status update.
+     * Start cooking an order (PENDING → COOKING).
      */
-    public static class OrderStatusRequest {
-        private OrderStatus status;
-
-        public OrderStatus getStatus() {
-            return status;
-        }
-
-        public void setStatus(OrderStatus status) {
-            this.status = status;
-        }
+    @PatchMapping("/orders/{id}/start")
+    public ResponseEntity<Order> startOrder(@PathVariable Long id) {
+        orderService.updateStatus(id, OrderStatus.COOKING);
+        return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
     /**
-     * Check if status transition is valid.
+     * Mark an order as ready (COOKING → READY).
      */
-    private boolean isValidTransition(OrderStatus current, OrderStatus next) {
-        switch (current) {
-            case PENDING:
-                return next == OrderStatus.COOKING;
-            case COOKING:
-                return next == OrderStatus.READY || next == OrderStatus.CANCELLED;
-            default:
-                return false;
-        }
+    @PatchMapping("/orders/{id}/complete")
+    public ResponseEntity<Order> completeOrder(@PathVariable Long id) {
+        orderService.updateStatus(id, OrderStatus.READY);
+        return ResponseEntity.ok(orderService.getOrderById(id));
     }
 }

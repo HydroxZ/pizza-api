@@ -1,44 +1,41 @@
 package com.awesomepizza.domain;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import java.io.Serializable;
+
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Entity representing pizza sizes.
  */
+@Data
 @Entity
 @Table(name = "sizes")
 public class Size implements Serializable {
 
     @Id
-    private String name; // e.g., "SMALL", "MEDIUM", "LARGE"
+    @Schema(example = "SMALL", description = "Name of the pizza size. Valid values: SMALL, MEDIUM, LARGE", requiredMode = Schema.RequiredMode.REQUIRED, enumAsRef = true)
+    private String name;
 
     @Column(nullable = false)
     private double priceAdjustment;
 
-    /** Default constructor (required by JPA) */
     public Size() {
     }
 
-    /** Constructor for creating new sizes */
-    public Size(String name, double priceAdjustment) {
+    @JsonCreator
+    public Size(@JsonProperty("name") String name, @JsonProperty("priceAdjustment") double priceAdjustment) {
         this.name = name;
         this.priceAdjustment = priceAdjustment;
     }
 
-    /** Convenience constructor using enum values */
     public static final Size SMALL = new Size("SMALL", 0.0);
     public static final Size MEDIUM = new Size("MEDIUM", 1.5);
     public static final Size LARGE = new Size("LARGE", 2.0);
-
-    /** Get the size name */
-    public String getName() {
-        return name;
-    }
-
-    public double getPriceAdjustment() {
-        return priceAdjustment;
-    }
 
     @Override
     public boolean equals(Object o) {
@@ -53,13 +50,5 @@ public class Size implements Serializable {
     @Override
     public int hashCode() {
         return name != null ? name.hashCode() : 0;
-    }
-
-    @Override
-    public String toString() {
-        return "Size{" +
-                "name='" + name + '\'' +
-                ", priceAdjustment=" + priceAdjustment +
-                '}';
     }
 }

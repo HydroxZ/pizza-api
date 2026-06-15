@@ -1,8 +1,12 @@
 package com.awesomepizza.domain;
 
 import jakarta.persistence.*;
+import lombok.Data;
+import lombok.NonNull;
+import lombok.Setter;
 import java.time.LocalDateTime;
 
+@Data
 @Entity
 @Table(name = "orders")
 public class Order {
@@ -10,15 +14,13 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    /** Foreign key to pizza type */
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "pizza_type_id", nullable = false)
-    private PizzaType pizzaType;
+    /** Pizza type name */
+    @Column(name = "pizza_type_name", nullable = false)
+    private String pizzaType;
 
-    /** Foreign key to size (SMALL/MEDIUM/LARGE) */
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "size_id", nullable = false)
-    private Size size;
+    /** Size (SMALL/MEDIUM/LARGE) */
+    @Column(name = "size", nullable = false, length = 10)
+    private String size;
 
     /** Order status enum */
     @Column(nullable = false)
@@ -34,6 +36,7 @@ public class Order {
     private LocalDateTime createdAt;
 
     /** Estimated pickup time (calculated or updated by chef) */
+    @Setter(lombok.AccessLevel.NONE)
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime estimatedReadyTime;
 
@@ -42,66 +45,16 @@ public class Order {
         this.status = OrderStatus.PENDING;
     }
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public PizzaType getPizzaType() {
-        return pizzaType;
-    }
-
-    public void setPizzaType(PizzaType pizzaType) {
-        this.pizzaType = pizzaType;
-    }
-
-    public Size getSize() {
-        return size;
-    }
-
-    public void setSize(Size size) {
-        this.size = size;
-    }
-
-    public String getSpecialInstructions() {
-        return specialInstructions;
-    }
-
-    public void setSpecialInstructions(String specialInstructions) {
-        this.specialInstructions = specialInstructions;
-    }
-
-    public OrderStatus getStatus() {
-        return status;
-    }
-
-    public void setStatus(OrderStatus status) {
-        this.status = status;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getEstimatedReadyTime() {
-        return estimatedReadyTime;
-    }
-
+    /**
+     * Set estimated ready time. Must not be null or in the past.
+     */
     public void setEstimatedReadyTime(LocalDateTime estimatedReadyTime) {
+        if (estimatedReadyTime == null) {
+            throw new NullPointerException("estimatedReadyTime must not be null");
+        }
+        if (estimatedReadyTime.isBefore(LocalDateTime.now())) {
+            throw new IllegalArgumentException("estimatedReadyTime cannot be set to a past time");
+        }
         this.estimatedReadyTime = estimatedReadyTime;
-    }
-
-    @Override
-    public String toString() {
-        return "Order{" +
-                "id=" + id +
-                ", pizzaType=" + (pizzaType != null ? pizzaType.getName() : "null") +
-                ", size=" + (size != null ? size.getName() : "null") +
-                ", status=" + status +
-                ", createdAt=" + createdAt +
-                '}';
     }
 }

@@ -16,7 +16,6 @@ public class PizzaTypeController {
 
     private final CatalogService catalogService;
 
-    @Autowired
     public PizzaTypeController(CatalogService catalogService) {
         this.catalogService = catalogService;
     }

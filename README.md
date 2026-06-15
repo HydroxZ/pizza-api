@@ -39,3 +39,19 @@ Set via `application.properties` file
 
 - **Catalog API**:
   - `GET /api/pizza-types` - List available pizzas with pricing
+
+## API Documentation
+
+Swagger UI is available at `http://localhost:8080/swagger-ui.html` when the application is running.
+
+- **Interactive UI**: [http://localhost:8080/swagger-ui.html](http://localhost:8080/swagger-ui.html)
+  - Try out API endpoints directly in browser
+  - View request/response schemas and data models
+  - See parameters, descriptions, and validation rules
+  - Test calls with built-in client
+
+- **OpenAPI Specification**: [http://localhost:8080/v3/api-docs](http://localhost:8080/v3/api-docs)
+  - Raw JSON spec for API consumers and tooling
+  - Available at `/v2/api-docs` as well (legacy OpenAPI 2.0 format)
+
+The documentation is auto-generated from your controller annotations (`@PostMapping`, `@GetMapping`, etc.) and request/response bodies.

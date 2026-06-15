@@ -1,14 +1,26 @@
 package com.awesomepizza.controller;
 
-import com.awesomepizza.domain.PizzaType;
-import com.awesomepizza.domain.Size;
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Request DTO for placing a new order.
  */
 public class OrderRequest {
+
+    public enum PizzaType {
+        MARGHERITA, PEPPERONI, VEGGIE, HAWAIIAN
+    }
+
+    public enum Size {
+        SMALL, MEDIUM, LARGE
+    }
+
+    @Schema(example = "MARGHERITA")
     private PizzaType pizzaType;
+
+    @Schema(example = "SMALL")
     private Size size;
+
     private String specialInstructions;
 
     public PizzaType getPizzaType() {
