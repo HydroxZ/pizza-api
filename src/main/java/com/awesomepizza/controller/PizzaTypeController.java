@@ -2,7 +2,6 @@ package com.awesomepizza.controller;
 
 import com.awesomepizza.domain.PizzaType;
 import com.awesomepizza.service.CatalogService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,9 +19,6 @@ public class PizzaTypeController {
         this.catalogService = catalogService;
     }
 
-    /**
-     * Get all available pizza types with pricing information
-     */
     @GetMapping
     public ResponseEntity<List<PizzaType>> getPizzaTypes() {
         List<PizzaType> types = catalogService.getPizzaTypes();
