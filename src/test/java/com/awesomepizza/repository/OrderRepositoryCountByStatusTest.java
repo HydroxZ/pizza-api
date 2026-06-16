@@ -3,9 +3,16 @@ package com.awesomepizza.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 import com.awesomepizza.domain.Order;
 import com.awesomepizza.domain.OrderStatus;
+import com.awesomepizza.domain.PizzaType;
+import com.awesomepizza.domain.Size;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -22,6 +29,23 @@ class OrderRepositoryCountByStatusTest {
     @Autowired
     void setUp(OrderRepository orderRepository) {
         this.orderRepository = orderRepository;
+    }
+
+    @BeforeEach
+    void seedTestOrder() {
+        orderRepository.deleteAll();
+        var pizzaType = PizzaType.createFromEntity(
+                "MARGHERITA", "Classic tomato sauce and mozzarella",
+                BigDecimal.valueOf(12.99), List.of("tomato", "mozzarella"));
+        var order = new Order();
+        order.setPizzaType(pizzaType);
+        order.setSize(Size.SMALL);
+        orderRepository.save(order);
+    }
+
+    @AfterEach
+    void cleanUp() {
+        orderRepository.deleteAll();
     }
 
     @Nested

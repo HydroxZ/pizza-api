@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
@@ -13,6 +14,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "pizza_types")
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class PizzaType {
 
     /** Static enum values for default pizza types */
@@ -53,7 +55,8 @@ public class PizzaType {
 
     private BigDecimal price;
 
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "pizza_type_ingredients", joinColumns = @JoinColumn(name = "pizza_type_id"))
     @Column(name = "ingredient")
     private List<String> ingredients;
 
@@ -63,9 +66,23 @@ public class PizzaType {
         this.createdAt = LocalDateTime.now();
     }
 
-    @JsonCreator
-    public PizzaType(@JsonProperty("name") String name, @JsonProperty("description") String description,
-            @JsonProperty("price") BigDecimal price, @JsonProperty("ingredients") List<String> ingredients) {
+    public static PizzaType createFromEntity(String name, String description, BigDecimal price,
+            List<String> ingredients) {
+        var pizza = new PizzaType();
+        setFields(pizza, name, description, price, ingredients);
+        return pizza;
+    }
+
+    private static void setFields(PizzaType pizza, String name, String description, BigDecimal price,
+            List<String> ingredients) {
+        pizza.name = name;
+        pizza.description = description;
+        pizza.price = price;
+        pizza.ingredients = ingredients;
+        pizza.createdAt = LocalDateTime.now();
+    }
+
+    public PizzaType(String name, String description, BigDecimal price, List<String> ingredients) {
         this.name = name;
         this.description = description;
         this.price = price;
@@ -107,7 +124,14 @@ public class PizzaType {
         return this.ingredients != null ? this.ingredients : List.of();
     }
 
+    /**
+     * Check if price is strictly greater than value, handles null gracefully (guard
+     * clause)
+     */
     public boolean isGreaterThan(BigDecimal value) {
+        if (value == null) {
+            return false;
+        }
         return this.price.compareTo(value) > 0;
     }
 }

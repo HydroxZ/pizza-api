@@ -25,12 +25,13 @@ class OrderTest {
         var order = new Order();
 
         assertThatThrownBy(() -> order.setPizzaType(null))
-                .isInstanceOf(NullPointerException.class);
+                .isInstanceOf(NullPointerException.class)
+                .hasMessageContaining("pizzaType must not be null");
     }
 
     @Test
     @DisplayName("Setters")
-    void setValidPizzaType_returnsCorrectPizzaType() {
+    void setPizzaType_withEntity_returnsCorrectOrder() {
         var order = new Order();
         var pizzaType = PizzaType.MARGHERITA;
 
@@ -40,7 +41,7 @@ class OrderTest {
     }
 
     @Test
-    void setValidSize_returnsCorrectSize() {
+    void setSize_returnsCorrectSize() {
         var order = new Order();
         var size = Size.LARGE;
 

@@ -39,8 +39,10 @@ class CustomerControllerTest {
 
   @BeforeEach
   void setUp() {
+    var pizzaType = com.awesomepizza.domain.PizzaType.valueOf("MARGHERITA");
     savedOrder = new Order();
     savedOrder.setStatus(OrderStatus.PENDING);
+    savedOrder.setPizzaType(pizzaType);
   }
 
   @Test

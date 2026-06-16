@@ -1,5 +1,8 @@
 package com.awesomepizza.controller;
 
+import jakarta.validation.Valid;
+import com.awesomepizza.domain.PizzaType;
+import com.awesomepizza.domain.Size;
 import com.awesomepizza.domain.Order;
 import com.awesomepizza.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,10 +29,17 @@ public class CustomerController {
      * Returns the created order including its ID (order code).
      */
     @PostMapping("/orders")
-    public ResponseEntity<Order> placeOrder(@RequestBody OrderRequest request) {
+    public ResponseEntity<Order> placeOrder(@Valid @RequestBody OrderRequestDto request) {
+        // Parse pizza type from enum to entity using factory method (enum.name()
+        // matches static final names)
+        PizzaType parsedPizzaType = PizzaType.valueOf(request.getPizzaType());
+
+        Size parsedSize = Size.valueOf(request.getSize());
+
         Order order = new Order();
-        order.setPizzaType(request.getPizzaType().name());
-        order.setSize(request.getSize().name());
+        // Set pizza type first, then size - need to match @Data annotation field types
+        order.setPizzaType(parsedPizzaType);
+        order.setSize(parsedSize);
         order.setSpecialInstructions(request.getSpecialInstructions());
 
         Order savedOrder = orderService.createOrder(order);

@@ -7,9 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
-/**
- * Service for managing the chef's queue operations.
- */
 @Service
 public class QueueManager {
 
@@ -20,17 +17,11 @@ public class QueueManager {
         this.orderRepository = orderRepository;
     }
 
-    /**
-     * Get all pending orders in the queue (FIFO).
-     */
     public List<Order> getPendingQueue() {
         return orderRepository.findAllByStatusOrderByCreatedAt(
                 OrderStatus.PENDING, false);
     }
 
-    /**
-     * Get count of pending orders.
-     */
     public long getPendingCount() {
         return orderRepository.countByStatus(OrderStatus.PENDING);
     }

@@ -11,11 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.awesomepizza.domain.PizzaType;
 
-/**
- * JUnit 5 repository tests with @SpringBootTest and @Transactional isolation.
- * Follows code philosophy: fail fast on invalid queries, guard clauses for edge
- * cases.
- */
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @DisplayName("PizzaType Repository Tests")
 class PizzaTypeRepositoryTest {
@@ -77,7 +72,8 @@ class PizzaTypeRepositoryTest {
     @Nested
     @DisplayName("Edge Cases")
     class EdgeCases {
-
+        @Test
+        @DisplayName("Save with null name throws exception")
         void saveWithNullName_throwsException() {
             var pizza = new PizzaType();
             pizza.setName(null); // Invalid state

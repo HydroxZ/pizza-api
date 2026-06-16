@@ -3,35 +3,33 @@ package com.awesomepizza.service;
 import com.awesomepizza.domain.Order;
 import com.awesomepizza.domain.OrderNotFoundException;
 import com.awesomepizza.domain.OrderStatus;
+import com.awesomepizza.domain.PizzaType;
 import com.awesomepizza.repository.OrderRepository;
+import com.awesomepizza.repository.PizzaTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 
-/**
- * Service layer for order management business logic.
- */
 @Service
 public class OrderService {
 
     private final OrderRepository orderRepository;
+    private final PizzaTypeRepository pizzaTypeRepository;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository) {
+    public OrderService(OrderRepository orderRepository, PizzaTypeRepository pizzaTypeRepository) {
         this.orderRepository = orderRepository;
+        this.pizzaTypeRepository = pizzaTypeRepository;
     }
 
-    /**
-     * Create a new order and save it.
-     */
     public Order createOrder(Order order) {
+        PizzaType managed = pizzaTypeRepository.findByName(order.getPizzaType().getName())
+                .orElseGet(() -> pizzaTypeRepository.save(order.getPizzaType()));
+        order.setPizzaType(managed);
         return orderRepository.save(order);
     }
 
-    /**
-     * Get order by ID.
-     */
     public Order getOrderById(Long orderId) {
         return orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(orderId));

@@ -37,6 +37,21 @@ public class Size implements Serializable {
     public static final Size MEDIUM = new Size("MEDIUM", 1.5);
     public static final Size LARGE = new Size("LARGE", 2.0);
 
+    public static Size valueOf(String name) {
+        String upperName = name != null ? name.toUpperCase() : "";
+        switch (upperName) {
+            case "SMALL":
+                return SMALL;
+            case "MEDIUM":
+                return MEDIUM;
+            case "LARGE":
+                return LARGE;
+            default:
+                throw new IllegalArgumentException(
+                        String.format("Unknown size: %s. Valid sizes are SMALL, MEDIUM, LARGE", name));
+        }
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o)
