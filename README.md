@@ -25,13 +25,16 @@ Set via `application.properties` file
 ## API Reference
 
 - **Customer APIs** (no auth required):
-  - `POST /api/orders` - Place new order
-  - `GET /api/orders/{id}` - Track order status
-  - `DELETE /api/orders/{id}` - Cancel pending order
+  - `POST /api/customers/orders` - Place new order
+  - `GET /api/customers/orders/{orderId}` - Track order status
+  - `DELETE /api/customers/orders/{orderId}` - Cancel pending order (PENDING only)
 
 - **Chef APIs**:
-  - `GET /api/orders/current` - Get first order in queue (FIFO)
-  - `PATCH /api/orders/{id}` - Update order status
+  - `GET /api/chef/queue` - View pending order queue (paginated, defaults: page 0, size 20, sort by createdAt ASC)
+  - `GET /api/chef/orders/{id}` - Get an order by ID
+  - `DELETE /api/chef/orders/{id}` - Force cancel an order at any status
+  - `PATCH /api/chef/orders/{id}/start` - Start cooking (PENDING → COOKING)
+  - `PATCH /api/chef/orders/{id}/complete` - Mark order ready (COOKING → READY)
 
 - **Catalog API**:
   - `GET /api/pizza-types` - List available pizzas with pricing
