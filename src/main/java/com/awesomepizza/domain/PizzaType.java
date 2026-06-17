@@ -3,9 +3,7 @@ package com.awesomepizza.domain;
 import java.math.BigDecimal;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -14,7 +12,7 @@ import java.time.LocalDateTime;
 @Data
 @Entity
 @Table(name = "pizza_types")
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
 public class PizzaType {
 
     /** Static enum values for default pizza types */

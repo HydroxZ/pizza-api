@@ -57,10 +57,17 @@ public class OrderService {
     }
 
     public void cancelOrder(Long orderId) {
-        Order order = getOrderById(orderId);
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
+
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            return;
+        }
+
         if (order.getStatus() != OrderStatus.PENDING) {
             throw new IllegalArgumentException("Cannot cancel order: " + order.getStatus());
         }
+
         order.setStatus(OrderStatus.CANCELLED);
         orderRepository.save(order);
     }

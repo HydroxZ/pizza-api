@@ -55,4 +55,9 @@ public class CustomerController {
         return ResponseEntity.ok(order);
     }
 
+    @DeleteMapping("/orders/{orderId}")
+    public ResponseEntity<Void> cancelOrder(@PathVariable Long orderId) {
+        orderService.cancelOrder(orderId);
+        return ResponseEntity.noContent().build();
+    }
 }

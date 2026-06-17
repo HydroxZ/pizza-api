@@ -30,4 +30,14 @@ public class GlobalExceptionHandler {
                 System.currentTimeMillis());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
+
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<ApiError> handleIllegalState(IllegalStateException ex) {
+        log.warn("Operation not allowed for order deletion: {}", ex.getMessage());
+        ApiError error = new ApiError(
+                HttpStatus.CONFLICT.toString(),
+                "Cannot perform operation on order",
+                System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(error);
+    }
 }
