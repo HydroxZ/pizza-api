@@ -22,7 +22,7 @@ public class OrderService {
 
     @Autowired
     public OrderService(OrderRepository orderRepository, PizzaTypeRepository pizzaTypeRepository,
-                        OrderItemRepository orderItemRepository) {
+            OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
         this.pizzaTypeRepository = pizzaTypeRepository;
         this.orderItemRepository = orderItemRepository;
@@ -76,14 +76,13 @@ public class OrderService {
             } else {
                 // Create custom pizza type with provided price (or default)
                 BigDecimal priceValue = request.getUnitPrice() != null
-                    ? BigDecimal.valueOf(request.getUnitPrice())
-                    : BigDecimal.TEN;
+                        ? BigDecimal.valueOf(request.getUnitPrice())
+                        : BigDecimal.TEN;
                 PizzaType customType = new PizzaType(
                         request.getPizzaType(),
                         "Custom " + request.getPizzaType(),
                         priceValue,
-                        List.of()
-                );
+                        List.of());
                 pizzaType = customType;
                 unitPrice = priceValue;
 
@@ -152,6 +151,19 @@ public class OrderService {
 
         if (order.getStatus() != OrderStatus.PENDING) {
             throw new IllegalArgumentException("Cannot cancel order: " + order.getStatus());
+        }
+
+        order.setStatus(OrderStatus.CANCELLED);
+        orderRepository.save(order);
+    }
+
+    @Transactional
+    public void forceCancelOrder(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
+
+        if (order.getStatus() == OrderStatus.CANCELLED) {
+            return;
         }
 
         order.setStatus(OrderStatus.CANCELLED);

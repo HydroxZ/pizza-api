@@ -4,6 +4,8 @@ import com.awesomepizza.domain.Order;
 import com.awesomepizza.domain.OrderStatus;
 import com.awesomepizza.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import java.util.List;
 
@@ -24,5 +26,9 @@ public class QueueManager {
 
     public long getPendingCount() {
         return orderRepository.countByStatus(OrderStatus.PENDING);
+    }
+
+    public Page<Order> getPendingQueue(Pageable pageable) {
+        return orderRepository.findAllByStatusOrderByCreatedAt(OrderStatus.PENDING, pageable);
     }
 }

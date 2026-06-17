@@ -10,14 +10,13 @@ import com.awesomepizza.domain.OrderStatus;
 import com.awesomepizza.service.OrderService;
 import com.awesomepizza.service.QueueManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
-/**
- * REST Controller for chef-facing queue management APIs.
- */
 @RestController
 @RequestMapping("/api/chef")
 public class ChefController {
@@ -36,11 +35,36 @@ public class ChefController {
      */
     @Operation(summary = "View the pending order queue")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Queue retrieved successfully", content = @Content(schema = @Schema(implementation = Order.class)))
+            @ApiResponse(responseCode = "200", description = "Queue retrieved successfully", content = @Content(schema = @Schema(implementation = Order.class)))
     })
     @GetMapping("/queue")
-    public ResponseEntity<List<Order>> getQueue() {
-        return ResponseEntity.ok(queueManager.getPendingQueue());
+    public ResponseEntity<Page<Order>> getQueue(
+            @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
+        return ResponseEntity.ok(queueManager.getPendingQueue(pageable));
+    }
+
+    @Operation(summary = "Get an order by ID")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Order found", content = @Content(schema = @Schema(implementation = Order.class))),
+            @ApiResponse(responseCode = "404", description = "Order not found")
+    })
+    @GetMapping("/orders/{id}")
+    public ResponseEntity<Order> getOrderById(@PathVariable Long id) {
+        return ResponseEntity.ok(orderService.getOrderById(id));
+    }
+
+    /**
+     * Cancel an order at any status (force cancel).
+     */
+    @Operation(summary = "Cancel an order (any status)")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "Order cancelled successfully"),
+            @ApiResponse(responseCode = "404", description = "Order not found")
+    })
+    @DeleteMapping("/orders/{id}")
+    public ResponseEntity<Void> cancelOrder(@PathVariable Long id) {
+        orderService.forceCancelOrder(id);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -48,8 +72,8 @@ public class ChefController {
      */
     @Operation(summary = "Start cooking an order (PENDING → COOKING)")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Order status updated to COOKING", content = @Content(schema = @Schema(implementation = Order.class))),
-        @ApiResponse(responseCode = "404", description = "Order not found")
+            @ApiResponse(responseCode = "200", description = "Order status updated to COOKING", content = @Content(schema = @Schema(implementation = Order.class))),
+            @ApiResponse(responseCode = "404", description = "Order not found")
     })
     @PatchMapping("/orders/{id}/start")
     public ResponseEntity<Order> startOrder(@PathVariable Long id) {
@@ -62,8 +86,8 @@ public class ChefController {
      */
     @Operation(summary = "Mark an order as ready (COOKING → READY)")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "Order marked as READY", content = @Content(schema = @Schema(implementation = Order.class))),
-        @ApiResponse(responseCode = "404", description = "Order not found")
+            @ApiResponse(responseCode = "200", description = "Order marked as READY", content = @Content(schema = @Schema(implementation = Order.class))),
+            @ApiResponse(responseCode = "404", description = "Order not found")
     })
     @PatchMapping("/orders/{id}/complete")
     public ResponseEntity<Order> completeOrder(@PathVariable Long id) {
