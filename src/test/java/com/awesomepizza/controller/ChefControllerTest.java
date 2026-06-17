@@ -95,7 +95,7 @@ class ChefControllerTest {
     }
 
     @Test
-    @DisplayName("PATCH /api/chef/orders/{id}/start - returns 500 on invalid transition")
+    @DisplayName("PATCH /api/chef/orders/{id}/start - with invalid transition returns error")
     void startOrder_withInvalidTransition_returnsError() throws Exception {
         when(orderService.getOrderById(1L)).thenReturn(cookingOrder);
         org.mockito.Mockito.doThrow(new IllegalStateException("Invalid status transition"))
