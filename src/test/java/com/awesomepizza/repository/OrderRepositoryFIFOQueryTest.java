@@ -46,7 +46,7 @@ class OrderRepositoryFIFOQueryTest {
         public Order build(OrderStatus status) {
             var order = new Order();
             order.setPizzaType(pizzaType);
-            order.setSize(size);
+            order.setSize(size.getName());
             order.setStatus(status);
             order.setSpecialInstructions(specialInstructions);
             return order;

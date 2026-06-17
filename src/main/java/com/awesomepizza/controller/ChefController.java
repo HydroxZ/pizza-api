@@ -1,5 +1,10 @@
 package com.awesomepizza.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.awesomepizza.domain.Order;
 import com.awesomepizza.domain.OrderStatus;
 import com.awesomepizza.service.OrderService;
@@ -29,6 +34,10 @@ public class ChefController {
     /**
      * View the pending order queue (FIFO).
      */
+    @Operation(summary = "View the pending order queue")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Queue retrieved successfully", content = @Content(schema = @Schema(implementation = Order.class)))
+    })
     @GetMapping("/queue")
     public ResponseEntity<List<Order>> getQueue() {
         return ResponseEntity.ok(queueManager.getPendingQueue());
@@ -37,6 +46,11 @@ public class ChefController {
     /**
      * Start cooking an order (PENDING → COOKING).
      */
+    @Operation(summary = "Start cooking an order (PENDING → COOKING)")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Order status updated to COOKING", content = @Content(schema = @Schema(implementation = Order.class))),
+        @ApiResponse(responseCode = "404", description = "Order not found")
+    })
     @PatchMapping("/orders/{id}/start")
     public ResponseEntity<Order> startOrder(@PathVariable Long id) {
         orderService.updateStatus(id, OrderStatus.COOKING);
@@ -46,6 +60,11 @@ public class ChefController {
     /**
      * Mark an order as ready (COOKING → READY).
      */
+    @Operation(summary = "Mark an order as ready (COOKING → READY)")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "Order marked as READY", content = @Content(schema = @Schema(implementation = Order.class))),
+        @ApiResponse(responseCode = "404", description = "Order not found")
+    })
     @PatchMapping("/orders/{id}/complete")
     public ResponseEntity<Order> completeOrder(@PathVariable Long id) {
         orderService.updateStatus(id, OrderStatus.READY);

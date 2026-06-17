@@ -1,10 +1,6 @@
 # Awesome Pizza Order Management Portal
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue)](#)
-[![Build Status](https://img.shields.io/badge/build-passing-green)](#)
-[![License](https://img.shields.io/badge/license-MIT-orange)](#)
-
-> **Maintenance**: This project is actively maintained. Java 17+ required.
+> Java 17+ required.
 
 A Spring Boot REST API for managing pizza orders without user registration.
 
@@ -31,7 +27,7 @@ Set via `application.properties` file
 - **Customer APIs** (no auth required):
   - `POST /api/orders` - Place new order
   - `GET /api/orders/{id}` - Track order status
-  - `DELETE /api/orders/{id}/cancel` - Cancel pending order
+  - `DELETE /api/orders/{id}` - Cancel pending order
 
 - **Chef APIs**:
   - `GET /api/orders/current` - Get first order in queue (FIFO)

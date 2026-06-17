@@ -13,15 +13,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import java.util.List;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-/**
- * Integration tests for CustomerController endpoints.
- */
 @WebMvcTest(CustomerController.class)
 @DisplayName("Customer Controller Tests")
 class CustomerControllerTest {
@@ -48,11 +48,29 @@ class CustomerControllerTest {
   @Test
   @DisplayName("POST /api/customers/orders - returns 201 with saved order")
   void placeOrder_withValidRequest_returns201() throws Exception {
-    when(orderService.createOrder(any(Order.class))).thenReturn(savedOrder);
+    when(orderService.createOrderWithItems(anyList())).thenReturn(savedOrder);
 
     String body = "{\"pizzaType\":\"MARGHERITA\","
         + "\"size\":\"MEDIUM\","
         + "\"specialInstructions\":\"Extra cheese\"}";
+
+    mockMvc.perform(post("/api/customers/orders")
+        .contentType(MediaType.APPLICATION_JSON)
+        .content(body))
+        .andExpect(status().isCreated())
+        .andExpect(jsonPath("$.status").value("PENDING"));
+  }
+
+  @Test
+  @DisplayName("POST /api/customers/orders - with multiple items returns 201")
+  void placeOrder_withMultipleItems_returns201() throws Exception {
+    when(orderService.createOrderWithItems(anyList())).thenReturn(savedOrder);
+
+    String body = "{"
+        + "\"items\":["
+        + "  {\"pizzaType\":\"MARGHERITA\",\"size\":\"MEDIUM\",\"quantity\":2,\"specialInstructions\":\"No gluten\"},"
+        + "  {\"pizzaType\":\"PEPPERONI\",\"size\":\"LARGE\",\"quantity\":1}"
+        + "]}";
 
     mockMvc.perform(post("/api/customers/orders")
         .contentType(MediaType.APPLICATION_JSON)

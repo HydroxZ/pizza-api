@@ -1,5 +1,10 @@
 package com.awesomepizza.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import com.awesomepizza.domain.PizzaType;
 import com.awesomepizza.service.CatalogService;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +24,10 @@ public class PizzaTypeController {
         this.catalogService = catalogService;
     }
 
+    @Operation(summary = "Get all available pizza types")
+    @ApiResponses({
+        @ApiResponse(responseCode = "200", description = "List of pizza types", content = @Content(schema = @Schema(implementation = PizzaType.class)))
+    })
     @GetMapping
     public ResponseEntity<List<PizzaType>> getPizzaTypes() {
         List<PizzaType> types = catalogService.getPizzaTypes();

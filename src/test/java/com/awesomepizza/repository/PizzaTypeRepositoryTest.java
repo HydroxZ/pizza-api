@@ -80,7 +80,7 @@ class PizzaTypeRepositoryTest {
 
             assertThatThrownBy(() -> pizzaTypeRepository.save(pizza))
                     .isInstanceOf(RuntimeException.class)
-                    .hasMessageContaining("cannot be null");
+                    .hasMessageContaining("NULL not allowed for column");
         }
     }
 

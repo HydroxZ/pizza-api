@@ -45,9 +45,9 @@ class OrderTest {
         var order = new Order();
         var size = Size.LARGE;
 
-        order.setSize(size);
+        order.setSize(size.getName());
 
-        assertThat(order.getSize()).isEqualTo(size);
+        assertThat(order.getSize()).isEqualTo(size.getName());
     }
 
     @Test

@@ -1,14 +1,16 @@
 package com.awesomepizza.service;
 
-import com.awesomepizza.domain.Order;
-import com.awesomepizza.domain.OrderNotFoundException;
-import com.awesomepizza.domain.OrderStatus;
-import com.awesomepizza.domain.PizzaType;
+import com.awesomepizza.controller.PizzaItemRequest;
+import com.awesomepizza.domain.*;
+import com.awesomepizza.repository.OrderItemRepository;
 import com.awesomepizza.repository.OrderRepository;
 import com.awesomepizza.repository.PizzaTypeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -16,17 +18,101 @@ public class OrderService {
 
     private final OrderRepository orderRepository;
     private final PizzaTypeRepository pizzaTypeRepository;
+    private final OrderItemRepository orderItemRepository;
 
     @Autowired
-    public OrderService(OrderRepository orderRepository, PizzaTypeRepository pizzaTypeRepository) {
+    public OrderService(OrderRepository orderRepository, PizzaTypeRepository pizzaTypeRepository,
+                        OrderItemRepository orderItemRepository) {
         this.orderRepository = orderRepository;
         this.pizzaTypeRepository = pizzaTypeRepository;
+        this.orderItemRepository = orderItemRepository;
     }
 
+    /**
+     * Create a single-pizza order (backward compatible).
+     */
+    @Transactional
     public Order createOrder(Order order) {
         PizzaType managed = pizzaTypeRepository.findByName(order.getPizzaType().getName())
                 .orElseGet(() -> pizzaTypeRepository.save(order.getPizzaType()));
-        order.setPizzaType(managed);
+
+        // Create a single item for backward compatibility
+        if (order.getOrderItems() == null) {
+            order.setOrderItems(new ArrayList<>());
+        }
+        OrderItem item = new OrderItem();
+        item.setOrder(order);
+        item.setPizzaType(managed);
+        item.setSize(order.getSize());
+        item.setQuantity(1);
+        item.setUnitPrice(BigDecimal.valueOf(managed.getPrice().doubleValue()));
+        item.setTotalPrice(item.getUnitPrice().multiply(BigDecimal.ONE));
+
+        order.addItem(item);
+        return orderRepository.save(order);
+    }
+
+    /**
+     * Create an order with multiple pizza items.
+     */
+    @Transactional
+    public Order createOrderWithItems(List<PizzaItemRequest> itemRequests) {
+        if (itemRequests == null || itemRequests.isEmpty()) {
+            throw new IllegalArgumentException("At least one pizza item is required");
+        }
+
+        // Validate and resolve all pizza types first
+        List<OrderItem> items = new ArrayList<>();
+        for (PizzaItemRequest request : itemRequests) {
+            java.util.Optional<PizzaType> existingType = pizzaTypeRepository.findByName(request.getPizzaType());
+
+            PizzaType pizzaType;
+            BigDecimal unitPrice;
+
+            if (existingType.isPresent()) {
+                // Use existing pizza type's price
+                pizzaType = existingType.get();
+                unitPrice = pizzaType.getPrice();
+            } else {
+                // Create custom pizza type with provided price (or default)
+                BigDecimal priceValue = request.getUnitPrice() != null
+                    ? BigDecimal.valueOf(request.getUnitPrice())
+                    : BigDecimal.TEN;
+                PizzaType customType = new PizzaType(
+                        request.getPizzaType(),
+                        "Custom " + request.getPizzaType(),
+                        priceValue,
+                        List.of()
+                );
+                pizzaType = customType;
+                unitPrice = priceValue;
+
+                // Persist custom pizza type before linking to order item
+                pizzaTypeRepository.save(customType);
+            }
+
+            OrderItem item = new OrderItem();
+            item.setPizzaType(pizzaType);
+            item.setSize(request.getSize());
+            int qty = request.getQuantity() != null ? request.getQuantity() : 1;
+            item.setQuantity(qty);
+            item.setUnitPrice(unitPrice);
+            item.setTotalPrice(item.getUnitPrice().multiply(
+                    BigDecimal.valueOf(item.getQuantity())));
+            if (request.getSpecialInstructions() != null && !request.getSpecialInstructions().isEmpty()) {
+                item.setSpecialInstructions(request.getSpecialInstructions());
+            }
+
+            items.add(item);
+        }
+
+        // Create the order and link all items
+        Order order = new Order();
+        for (OrderItem item : items) {
+            item.setOrder(order);
+            order.addItem(item);
+        }
+
         return orderRepository.save(order);
     }
 

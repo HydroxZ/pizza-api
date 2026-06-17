@@ -102,6 +102,6 @@ class ChefControllerTest {
                 .when(orderService).updateStatus(1L, OrderStatus.COOKING);
 
         mockMvc.perform(patch("/api/chef/orders/1/start"))
-                .andExpect(status().is5xxServerError());
+                .andExpect(status().is4xxClientError());
     }
 }

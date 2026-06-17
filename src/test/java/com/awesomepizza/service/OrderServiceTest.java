@@ -6,11 +6,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import com.awesomepizza.controller.PizzaItemRequest;
 import com.awesomepizza.repository.MockedOrderRepository;
 
 import com.awesomepizza.domain.Order;
 import com.awesomepizza.domain.OrderStatus;
 import com.awesomepizza.repository.OrderRepository;
+import java.util.List;
 import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -213,6 +215,67 @@ class OrderServiceTest {
             Order result = orderService.getCurrentOrder();
 
             assertThat(result).isEqualTo(cookingOrder);
+        }
+    }
+
+    @Nested
+    @DisplayName("CreateOrderWithItems")
+    class CreateOrderWithItemsTests {
+
+        private PizzaItemRequest margheritaSmall;
+        private PizzaItemRequest pepperoniLarge;
+
+        @BeforeEach
+        void setUp() {
+            margheritaSmall = new PizzaItemRequest();
+            margheritaSmall.setPizzaType("MARGHERITA");
+            margheritaSmall.setSize("SMALL");
+            margheritaSmall.setQuantity(2);
+
+            pepperoniLarge = new PizzaItemRequest();
+            pepperoniLarge.setPizzaType("PEPPERONI");
+            pepperoniLarge.setSize("LARGE");
+            pepperoniLarge.setQuantity(1);
+        }
+
+        void createOrderWithMultipleItems_createsSingleOrder() {
+            when(orderRepositoryMock.save(any())).thenAnswer(i -> {
+                Order order = (Order) i.getArguments()[0];
+                order.setId(42L);
+                return order;
+            });
+
+            List<PizzaItemRequest> items = List.of(margheritaSmall, pepperoniLarge);
+            Order result = orderService.createOrderWithItems(items);
+
+            assertThat(result.getId()).isEqualTo(42L);
+            assertThat(result.getItemCount()).isEqualTo(2);
+        }
+
+        void createOrderWithSingleItem_createsOrder() {
+            when(orderRepositoryMock.save(any())).thenAnswer(i -> {
+                Order order = (Order) i.getArguments()[0];
+                order.setId(100L);
+                return order;
+            });
+
+            List<PizzaItemRequest> items = List.of(margheritaSmall);
+            Order result = orderService.createOrderWithItems(items);
+
+            assertThat(result.getId()).isEqualTo(100L);
+            assertThat(result.getItemCount()).isEqualTo(1);
+        }
+
+        void createOrderWithEmptyList_throwsException() {
+            assertThatThrownBy(() -> orderService.createOrderWithItems(List.of()))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("At least one pizza item");
+        }
+
+        void createOrderWithNullList_throwsException() {
+            assertThatThrownBy(() -> orderService.createOrderWithItems(null))
+                    .isInstanceOf(IllegalArgumentException.class)
+                    .hasMessageContaining("At least one pizza item");
         }
     }
 }
