@@ -50,9 +50,10 @@ class CustomerControllerTest {
   void placeOrder_withValidRequest_returns201() throws Exception {
     when(orderService.createOrderWithItems(anyList())).thenReturn(savedOrder);
 
-    String body = "{\"pizzaType\":\"MARGHERITA\","
-        + "\"size\":\"MEDIUM\","
-        + "\"specialInstructions\":\"Extra cheese\"}";
+    String body = "{"
+        + "\"items\":["
+        + "  {\"pizzaType\":\"MARGHERITA\",\"size\":\"MEDIUM\",\"quantity\":1,\"specialInstructions\":\"Extra cheese\"}"
+        + "]}";
 
     mockMvc.perform(post("/api/customers/orders")
         .contentType(MediaType.APPLICATION_JSON)

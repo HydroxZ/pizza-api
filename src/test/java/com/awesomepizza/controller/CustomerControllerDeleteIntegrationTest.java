@@ -42,7 +42,7 @@ class CustomerControllerDeleteIntegrationTest {
         // Create a pending order in the database
         persistDefaultPizzaType();
         var order = new com.awesomepizza.domain.Order();
-        order.setSize(com.awesomepizza.domain.Size.MEDIUM.getName());
+        order.setSize(com.awesomepizza.domain.Size.MEDIUM);
         order.setPizzaType(persistedPizzaType);
 
         var savedOrder = orderRepository.save(order);
@@ -69,7 +69,7 @@ class CustomerControllerDeleteIntegrationTest {
     void deleteCancelledOrder_returns204() throws Exception {
         persistDefaultPizzaType();
         var order = new com.awesomepizza.domain.Order();
-        order.setSize(com.awesomepizza.domain.Size.MEDIUM.getName());
+        order.setSize(com.awesomepizza.domain.Size.MEDIUM);
         order.setPizzaType(persistedPizzaType);
 
         var savedOrder = orderRepository.save(order);

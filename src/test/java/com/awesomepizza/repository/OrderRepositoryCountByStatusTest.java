@@ -43,7 +43,7 @@ class OrderRepositoryCountByStatusTest {
         pizzaType = pizzaTypeRepository.save(pizzaType);
         var order = new Order();
         order.setPizzaType(pizzaType);
-        order.setSize(Size.SMALL.getName());
+        order.setSize(Size.SMALL);
         orderRepository.save(order);
     }
 

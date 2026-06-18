@@ -13,8 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 /**
  * REST Controller for customer-facing order APIs.
  */
@@ -31,35 +29,15 @@ public class CustomerController {
 
     /**
      * Place a new pizza order. No registration required.
-     * Supports both single-pizza (backward compatible) and multi-item orders.
      */
-    @Operation(summary = "Place a new pizza order", description = "Supports both single-pizza (backward compatible) and multi-item orders. No registration required.")
+    @Operation(summary = "Place a new pizza order", description = "No registration required.")
     @ApiResponses({
         @ApiResponse(responseCode = "201", description = "Order created successfully", content = @Content(schema = @Schema(implementation = OrderResponse.class))),
         @ApiResponse(responseCode = "400", description = "Invalid request body")
     })
     @PostMapping("/orders")
     public ResponseEntity<OrderResponse> placeOrder(@Valid @RequestBody OrderRequest request) {
-        Order order;
-
-        if (request.getItems() != null && !request.getItems().isEmpty()) {
-            order = orderService.createOrderWithItems(request.getItems());
-        } else {
-            PizzaItemRequest singleItem = new PizzaItemRequest();
-            singleItem.setPizzaType(request.getPizzaType());
-            singleItem.setSize(request.getSize());
-            if (request.getQuantity() != null) {
-                singleItem.setQuantity(request.getQuantity());
-            }
-            if (request.getUnitPrice() != null) {
-                singleItem.setUnitPrice(request.getUnitPrice());
-            }
-            if (request.getSpecialInstructions() != null) {
-                singleItem.setSpecialInstructions(request.getSpecialInstructions());
-            }
-            order = orderService.createOrderWithItems(List.of(singleItem));
-        }
-
+        Order order = orderService.createOrderWithItems(request.getItems());
         return ResponseEntity.status(HttpStatus.CREATED).body(OrderResponse.from(order));
     }
 

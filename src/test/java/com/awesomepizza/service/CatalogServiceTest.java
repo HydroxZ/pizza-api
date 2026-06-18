@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 class CatalogServiceTest {
 
@@ -14,16 +15,17 @@ class CatalogServiceTest {
     @DisplayName("GetPizzaTypes")
     class GetPizzaTypesTests {
 
+        @Test
         void getPizzaTypes_returnsAllFourPizzaTypes() {
             var result = catalogService.getPizzaTypes();
 
-            // Assert: exactly 4 types available
             assertThat(result).hasSize(4)
                     .extracting("name")
                     .containsExactlyInAnyOrder(
                             "MARGHERITA", "PEPPERONI", "VEGGIE", "HAWAIIAN");
         }
 
+        @Test
         void getPizzaTypes_returnsNonEmptyList() {
             var result = catalogService.getPizzaTypes();
 
@@ -35,6 +37,7 @@ class CatalogServiceTest {
     @DisplayName("GetPizzaTypeByName")
     class GetPizzaTypeByNameTests {
 
+        @Test
         void getPizzaTypeByName_exactMatch_returnsOptionalOf() {
             var name = "MARGHERITA";
 
@@ -42,9 +45,10 @@ class CatalogServiceTest {
 
             assertThat(result).isPresent()
                     .map(pt -> pt.getName())
-                    .isEqualTo("MARGHERITA");
+                    .hasValue("MARGHERITA");
         }
 
+        @Test
         void getPizzaTypeByName_caseInsensitive() {
             var input = "margherita";
 
@@ -52,18 +56,21 @@ class CatalogServiceTest {
 
             assertThat(result).isPresent()
                     .map(pt -> pt.getName())
-                    .isEqualTo("MARGHERITA");
+                    .hasValue("MARGHERITA");
         }
 
+        @Test
         void getPizzaTypeByName_nonExistent_returnsOptionalEmpty() {
             var result = catalogService.getPizzaTypeByName("UNKNOWN_PIZZA");
 
             assertThat(result).isEmpty();
         }
 
-        void getPizzaTypeByName_null_throwsNullPointerException() {
-            assertThatThrownBy(() -> catalogService.getPizzaTypeByName(null))
-                    .isInstanceOf(NullPointerException.class);
+        @Test
+        void getPizzaTypeByName_null_returnsOptionalEmpty() {
+            var result = catalogService.getPizzaTypeByName(null);
+
+            assertThat(result).isEmpty();
         }
     }
 }

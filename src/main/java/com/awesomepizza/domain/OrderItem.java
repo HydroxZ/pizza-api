@@ -27,7 +27,7 @@ public class OrderItem {
     private PizzaType pizzaType;
 
     @Column(nullable = false, length = 10)
-    private String size;
+    private Size size;
 
     @Column(nullable = false)
     private int quantity;
@@ -47,7 +47,7 @@ public class OrderItem {
     /**
      * Convenience constructor for creating an item with calculated total price.
      */
-    public OrderItem(PizzaType pizzaType, String size, int quantity, BigDecimal unitPrice) {
+    public OrderItem(PizzaType pizzaType, Size size, int quantity, BigDecimal unitPrice) {
         this.pizzaType = pizzaType;
         this.size = size;
         this.quantity = quantity;

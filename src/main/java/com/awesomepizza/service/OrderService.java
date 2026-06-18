@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class OrderService {
@@ -29,30 +30,6 @@ public class OrderService {
     }
 
     /**
-     * Create a single-pizza order (backward compatible).
-     */
-    @Transactional
-    public Order createOrder(Order order) {
-        PizzaType managed = pizzaTypeRepository.findByName(order.getPizzaType().getName())
-                .orElseGet(() -> pizzaTypeRepository.save(order.getPizzaType()));
-
-        // Create a single item for backward compatibility
-        if (order.getOrderItems() == null) {
-            order.setOrderItems(new ArrayList<>());
-        }
-        OrderItem item = new OrderItem();
-        item.setOrder(order);
-        item.setPizzaType(managed);
-        item.setSize(order.getSize());
-        item.setQuantity(1);
-        item.setUnitPrice(BigDecimal.valueOf(managed.getPrice().doubleValue()));
-        item.setTotalPrice(item.getUnitPrice().multiply(BigDecimal.ONE));
-
-        order.addItem(item);
-        return orderRepository.save(order);
-    }
-
-    /**
      * Create an order with multiple pizza items.
      */
     @Transactional
@@ -64,35 +41,24 @@ public class OrderService {
         // Validate and resolve all pizza types first
         List<OrderItem> items = new ArrayList<>();
         for (PizzaItemRequest request : itemRequests) {
-            java.util.Optional<PizzaType> existingType = pizzaTypeRepository.findByName(request.getPizzaType());
+            Optional<PizzaType> existingType = pizzaTypeRepository.findByName(request.getPizzaType());
 
             PizzaType pizzaType;
-            BigDecimal unitPrice;
 
             if (existingType.isPresent()) {
-                // Use existing pizza type's price
                 pizzaType = existingType.get();
-                unitPrice = pizzaType.getPrice();
             } else {
-                // Create custom pizza type with provided price (or default)
-                BigDecimal priceValue = request.getUnitPrice() != null
-                        ? BigDecimal.valueOf(request.getUnitPrice())
-                        : BigDecimal.TEN;
-                PizzaType customType = new PizzaType(
-                        request.getPizzaType(),
-                        "Custom " + request.getPizzaType(),
-                        priceValue,
-                        List.of());
-                pizzaType = customType;
-                unitPrice = priceValue;
-
-                // Persist custom pizza type before linking to order item
-                pizzaTypeRepository.save(customType);
+                throw new IllegalArgumentException("Unknown pizza type: " + request.getPizzaType()
+                        + ". Only menu pizzas are accepted.");
             }
+
+            Size size = Size.valueOf(request.getSize());
+            BigDecimal sizeMultiplier = getSizeMultiplier(size);
+            BigDecimal unitPrice = pizzaType.getPrice().multiply(sizeMultiplier);
 
             OrderItem item = new OrderItem();
             item.setPizzaType(pizzaType);
-            item.setSize(request.getSize());
+            item.setSize(size);
             int qty = request.getQuantity() != null ? request.getQuantity() : 1;
             item.setQuantity(qty);
             item.setUnitPrice(unitPrice);
@@ -183,6 +149,13 @@ public class OrderService {
             default:
                 return false;
         }
+    }
+
+    private BigDecimal getSizeMultiplier(Size size) {
+        if (size == null) return BigDecimal.ONE;
+        if (Size.SMALL.equals(size)) return new BigDecimal("0.80");
+        if (Size.LARGE.equals(size)) return new BigDecimal("1.20");
+        return BigDecimal.ONE;
     }
 
     private void calculateEstimatedReadyTime(Long orderId) {

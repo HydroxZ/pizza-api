@@ -76,21 +76,11 @@ class PizzaTypeRepositoryTest {
         @DisplayName("Save with null name throws exception")
         void saveWithNullName_throwsException() {
             var pizza = new PizzaType();
-            pizza.setName(null); // Invalid state
+            pizza.setName(null);
 
             assertThatThrownBy(() -> pizzaTypeRepository.save(pizza))
                     .isInstanceOf(RuntimeException.class)
                     .hasMessageContaining("NULL not allowed for column");
         }
     }
-
-    void saveWithEmptyName_throwsException() {
-        var pizza = new PizzaType();
-        pizza.setName(""); // Invalid state
-
-        assertThatThrownBy(() -> pizzaTypeRepository.save(pizza))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessageContaining("cannot be null or empty");
-    }
-
 }

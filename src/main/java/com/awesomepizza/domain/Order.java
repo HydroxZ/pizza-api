@@ -25,7 +25,7 @@ public class Order {
 
     // Size of the first item (for backward compatibility)
     @Column(name = "size", nullable = false, length = 10)
-    private String size;
+    private Size size;
 
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)

@@ -1,6 +1,7 @@
 package com.awesomepizza.controller;
 
 import com.awesomepizza.domain.PizzaType;
+import com.awesomepizza.domain.Size;
 import lombok.Data;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,7 +19,7 @@ public class OrderItemPizzaTypeResponse {
     private int quantity;
     private String size;
 
-    public static OrderItemPizzaTypeResponse from(PizzaType pizzaType, BigDecimal unitPrice, BigDecimal totalPrice, int quantity, String size) {
+    public static OrderItemPizzaTypeResponse from(PizzaType pizzaType, BigDecimal unitPrice, BigDecimal totalPrice, int quantity, Size size) {
         OrderItemPizzaTypeResponse r = new OrderItemPizzaTypeResponse();
         r.id = pizzaType.getId();
         r.name = pizzaType.getName();
@@ -28,7 +29,7 @@ public class OrderItemPizzaTypeResponse {
         r.ingredients = pizzaType.getIngredients();
         r.createdAt = pizzaType.getCreatedAt();
         r.quantity = quantity;
-        r.size = size;
+        r.size = size != null ? size.getName() : null;
         return r;
     }
 }

@@ -20,8 +20,5 @@ public class PizzaItemRequest {
     @Min(value = 1, message = "Quantity must be at least 1")
     private Integer quantity;
 
-    @Schema(example = "12.99", description = "Unit price for custom pizzas")
-    private Double unitPrice;
-
     private String specialInstructions;
 }

@@ -26,11 +26,13 @@ public class PizzaTypeController {
 
     @Operation(summary = "Get all available pizza types")
     @ApiResponses({
-        @ApiResponse(responseCode = "200", description = "List of pizza types", content = @Content(schema = @Schema(implementation = PizzaType.class)))
+        @ApiResponse(responseCode = "200", description = "List of pizza types", content = @Content(schema = @Schema(implementation = PizzaTypeResponse.class)))
     })
     @GetMapping
-    public ResponseEntity<List<PizzaType>> getPizzaTypes() {
-        List<PizzaType> types = catalogService.getPizzaTypes();
+    public ResponseEntity<List<PizzaTypeResponse>> getPizzaTypes() {
+        List<PizzaTypeResponse> types = catalogService.getPizzaTypes().stream()
+                .map(PizzaTypeResponse::from)
+                .toList();
         return ResponseEntity.ok(types);
     }
 }
