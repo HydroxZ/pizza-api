@@ -190,11 +190,7 @@ Both enforce:
 
 - [Checkstyle Rules Reference](https://checkstyle.org/config.html)
 - [Maven Checkstyle Plugin](https://maven.apache.org/plugins/maven-checkstyle-plugin/)
-- [Code Philosophy](./CODE_Philosophy.md) - The 5 Laws of Elegant Defense
 
-## Support
-
-Questions about specific violations? See `docs/CODE_REVIEW_GUIDELINES.md` for severity classification and confidence thresholds.
 
 ---
 **Remember**: Code quality is not a phase—it's the foundation of maintainable systems. These rules prevent bugs by design, following the **Code Philosophy**.
