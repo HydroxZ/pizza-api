@@ -21,21 +21,17 @@ public class Size implements Serializable {
     @Schema(example = "SMALL", description = "Name of the pizza size. Valid values: SMALL, MEDIUM, LARGE", requiredMode = Schema.RequiredMode.REQUIRED, enumAsRef = true)
     private String name;
 
-    @Column(nullable = false)
-    private double priceAdjustment;
-
     public Size() {
     }
 
     @JsonCreator
-    public Size(@JsonProperty("name") String name, @JsonProperty("priceAdjustment") double priceAdjustment) {
+    public Size(@JsonProperty("name") String name) {
         this.name = name;
-        this.priceAdjustment = priceAdjustment;
     }
 
-    public static final Size SMALL = new Size("SMALL", 0.0);
-    public static final Size MEDIUM = new Size("MEDIUM", 1.5);
-    public static final Size LARGE = new Size("LARGE", 2.0);
+    public static final Size SMALL = new Size("SMALL");
+    public static final Size MEDIUM = new Size("MEDIUM");
+    public static final Size LARGE = new Size("LARGE");
 
     public static Size valueOf(String name) {
         String upperName = name != null ? name.toUpperCase() : "";
@@ -52,18 +48,4 @@ public class Size implements Serializable {
         }
     }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (!(o instanceof Size))
-            return false;
-        Size size = (Size) o;
-        return name != null && name.equals(size.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return name != null ? name.hashCode() : 0;
-    }
 }
