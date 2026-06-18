@@ -70,7 +70,7 @@ class CustomerControllerTest {
     String body = "{"
         + "\"items\":["
         + "  {\"pizzaType\":\"MARGHERITA\",\"size\":\"MEDIUM\",\"quantity\":2,\"specialInstructions\":\"No gluten\"},"
-        + "  {\"pizzaType\":\"PEPPERONI\",\"size\":\"LARGE\",\"quantity\":1}"
+        + "  {\"pizzaType\":\"DIAVOLA\",\"size\":\"LARGE\",\"quantity\":1}"
         + "]}";
 
     mockMvc.perform(post("/api/customers/orders")

@@ -1,12 +1,15 @@
 package com.awesomepizza.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import com.awesomepizza.domain.Order;
 import com.awesomepizza.domain.OrderStatus;
+import com.awesomepizza.controller.OrderResponse;
 import com.awesomepizza.service.OrderService;
 import com.awesomepizza.service.QueueManager;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,13 +37,21 @@ public class ChefController {
      * View the pending order queue (FIFO).
      */
     @Operation(summary = "View the pending order queue")
+    @Parameters({
+            @Parameter(name = "page", description = "Page number (0-indexed)", example = "0"),
+            @Parameter(name = "size", description = "Page size", example = "20"),
+            @Parameter(name = "sort", description = "Sort property and direction (default: createdAt,asc)", example = "createdAt,asc")
+    })
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Queue retrieved successfully", content = @Content(schema = @Schema(implementation = Order.class)))
+            @ApiResponse(responseCode = "200", description = "Queue retrieved successfully", content = @Content(schema = @Schema(implementation = OrderResponse.class)))
     })
     @GetMapping("/queue")
-    public ResponseEntity<Page<Order>> getQueue(
+    public ResponseEntity<Page<OrderResponse>> getQueue(
+            @Parameter(hidden = true)
             @PageableDefault(size = 20, sort = "createdAt", direction = Sort.Direction.ASC) Pageable pageable) {
-        return ResponseEntity.ok(queueManager.getPendingQueue(pageable));
+        Page<Order> orders = queueManager.getPendingQueue(pageable);
+        Page<OrderResponse> response = orders.map(OrderResponse::from);
+        return ResponseEntity.ok(response);
     }
 
     @Operation(summary = "Get an order by ID")

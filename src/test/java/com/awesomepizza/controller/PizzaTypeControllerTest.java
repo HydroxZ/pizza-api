@@ -32,18 +32,18 @@ class PizzaTypeControllerTest {
   @Test
   @DisplayName("GET /api/pizza-types - returns 200 with all pizza types")
   void getPizzaTypes_returnsAllTypes() throws Exception {
-    PizzaType margherita = new PizzaType("MARGHERITA", "Classic tomato sauce and mozzarella",
-        BigDecimal.valueOf(12.99), List.of("tomato", "mozzarella"));
-    PizzaType pepperoni = new PizzaType("PEPPERONI", "Tomato sauce and pepperoni",
-        BigDecimal.valueOf(14.99), List.of("tomato", "mozzarella", "pepperoni"));
+    PizzaType margherita = new PizzaType("MARGHERITA", "Tomato sauce and mozzarella",
+        BigDecimal.valueOf(9.00), List.of("tomato", "mozzarella"));
+    PizzaType diavola = new PizzaType("DIAVOLA", "Tomato sauce and spicy salami",
+        BigDecimal.valueOf(11.00), List.of("tomato", "mozzarella", "spicy salami"));
 
-    when(catalogService.getPizzaTypes()).thenReturn(List.of(margherita, pepperoni));
+    when(catalogService.getPizzaTypes()).thenReturn(List.of(margherita, diavola));
 
     mockMvc.perform(get("/api/pizza-types"))
         .andExpect(status().isOk())
         .andExpect(jsonPath("$.length()").value(2))
         .andExpect(jsonPath("$[0].name").value("MARGHERITA"))
-        .andExpect(jsonPath("$[1].name").value("PEPPERONI"));
+        .andExpect(jsonPath("$[1].name").value("DIAVOLA"));
   }
 
   @Test

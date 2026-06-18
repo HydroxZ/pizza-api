@@ -18,34 +18,34 @@ public class PizzaType {
     /** Static enum values for default pizza types */
     public static final PizzaType MARGHERITA = new PizzaType(
             "MARGHERITA",
-            "Classic tomato sauce, mozzarella, and basil",
-            BigDecimal.valueOf(12.99),
+            "Tomato sauce, mozzarella, and fresh basil",
+            new BigDecimal("9.00"),
             List.of("tomato", "mozzarella", "basil"));
 
-    public static final PizzaType PEPPERONI = new PizzaType(
-            "PEPPERONI",
-            "Tomato sauce, mozzarella, and pepperoni",
-            BigDecimal.valueOf(14.99),
-            List.of("tomato", "mozzarella", "pepperoni"));
+    public static final PizzaType MARINARA = new PizzaType(
+            "MARINARA",
+            "Tomato sauce, garlic, oregano, and extra virgin olive oil",
+            new BigDecimal("7.00"),
+            List.of("tomato", "garlic", "oregano", "olive oil"));
 
-    public static final PizzaType VEGGIE = new PizzaType(
-            "VEGGIE",
-            "Tomato sauce, mozzarella, and vegetables",
-            BigDecimal.valueOf(13.99),
-            List.of("tomato", "mozzarella", "bell peppers", "onions"));
+    public static final PizzaType PATATOSA = new PizzaType(
+            "PATATOSA",
+            "Tomato sauce, mozzarella, and crispy french fries",
+            new BigDecimal("10.00"),
+            List.of("tomato", "mozzarella", "french fries"));
 
-    public static final PizzaType HAWAIIAN = new PizzaType(
-            "HAWAIIAN",
-            "Tomato sauce, mozzarella, ham, and pineapple",
-            BigDecimal.valueOf(14.99),
-            List.of("tomato", "mozzarella", "ham", "pineapple"));
+    public static final PizzaType DIAVOLA = new PizzaType(
+            "DIAVOLA",
+            "Tomato sauce, mozzarella, and spicy salami",
+            new BigDecimal("11.00"),
+            List.of("tomato", "mozzarella", "spicy salami", "chilli flakes"));
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(nullable = false, length = 50)
-    @Schema(example = "MARGHERITA", description = "Name of the pizza type. Valid values: MARGHERITA, PEPPERONI, VEGGIE, HAWAIIAN", requiredMode = Schema.RequiredMode.REQUIRED, enumAsRef = true)
+    @Schema(example = "MARGHERITA", description = "Name of the pizza type. Valid values: MARGHERITA, MARINARA, PATATOSA, DIAVOLA", requiredMode = Schema.RequiredMode.REQUIRED, enumAsRef = true)
     private String name;
 
     @Lob
@@ -93,15 +93,15 @@ public class PizzaType {
         switch (upperName) {
             case "MARGHERITA":
                 return MARGHERITA;
-            case "PEPPERONI":
-                return PEPPERONI;
-            case "VEGGIE":
-                return VEGGIE;
-            case "HAWAIIAN":
-                return HAWAIIAN;
+            case "MARINARA":
+                return MARINARA;
+            case "PATATOSA":
+                return PATATOSA;
+            case "DIAVOLA":
+                return DIAVOLA;
             default:
                 throw new IllegalArgumentException(
-                        String.format("Unknown pizza type: %s. Valid types are MARGHERITA, PEPPERONI, VEGGIE, HAWAIIAN",
+                        String.format("Unknown pizza type: %s. Valid types are MARGHERITA, MARINARA, PATATOSA, DIAVOLA",
                                 name));
         }
     }

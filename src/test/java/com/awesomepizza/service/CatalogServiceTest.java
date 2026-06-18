@@ -22,7 +22,7 @@ class CatalogServiceTest {
             assertThat(result).hasSize(4)
                     .extracting("name")
                     .containsExactlyInAnyOrder(
-                            "MARGHERITA", "PEPPERONI", "VEGGIE", "HAWAIIAN");
+                            "MARGHERITA", "MARINARA", "PATATOSA", "DIAVOLA");
         }
 
         @Test

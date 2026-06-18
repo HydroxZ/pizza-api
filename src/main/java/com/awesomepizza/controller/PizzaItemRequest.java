@@ -10,7 +10,7 @@ import lombok.Data;
 public class PizzaItemRequest {
 
     @NotNull
-    @Schema(example = "MARGHERITA", allowableValues = { "MARGHERITA", "PEPPERONI", "VEGGIE", "HAWAIIAN" })
+    @Schema(example = "MARGHERITA", allowableValues = { "MARGHERITA", "MARINARA", "PATATOSA", "DIAVOLA" })
     private String pizzaType;
 
     @NotNull

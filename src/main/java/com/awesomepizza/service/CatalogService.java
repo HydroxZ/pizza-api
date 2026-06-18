@@ -13,9 +13,9 @@ public class CatalogService {
 
     private static final List<PizzaType> PIZZA_TYPES = List.of(
             PizzaType.MARGHERITA,
-            PizzaType.PEPPERONI,
-            PizzaType.VEGGIE,
-            PizzaType.HAWAIIAN);
+            PizzaType.MARINARA,
+            PizzaType.PATATOSA,
+            PizzaType.DIAVOLA);
 
     /**
      * Get all available pizza types with pricing

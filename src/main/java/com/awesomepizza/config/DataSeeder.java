@@ -24,14 +24,14 @@ public class DataSeeder implements CommandLineRunner {
         }
 
         pizzaTypeRepository.saveAll(List.of(
-                new PizzaType("MARGHERITA", "Classic tomato sauce, mozzarella, and basil",
-                        BigDecimal.valueOf(12.99), List.of("tomato", "mozzarella", "basil")),
-                new PizzaType("PEPPERONI", "Tomato sauce, mozzarella, and pepperoni",
-                        BigDecimal.valueOf(14.99), List.of("tomato", "mozzarella", "pepperoni")),
-                new PizzaType("VEGGIE", "Tomato sauce, mozzarella, and vegetables",
-                        BigDecimal.valueOf(13.99), List.of("tomato", "mozzarella", "bell peppers", "onions")),
-                new PizzaType("HAWAIIAN", "Tomato sauce, mozzarella, ham, and pineapple",
-                        BigDecimal.valueOf(14.99), List.of("tomato", "mozzarella", "ham", "pineapple"))
+                new PizzaType("MARGHERITA", "Tomato sauce, mozzarella, and fresh basil",
+                        new BigDecimal("9.00"), List.of("tomato", "mozzarella", "basil")),
+                new PizzaType("MARINARA", "Tomato sauce, garlic, oregano, and extra virgin olive oil",
+                        new BigDecimal("7.00"), List.of("tomato", "garlic", "oregano", "olive oil")),
+                new PizzaType("PATATOSA", "Tomato sauce, mozzarella, and crispy french fries",
+                        new BigDecimal("10.00"), List.of("tomato", "mozzarella", "french fries")),
+                new PizzaType("DIAVOLA", "Tomato sauce, mozzarella, and spicy salami",
+                        new BigDecimal("11.00"), List.of("tomato", "mozzarella", "spicy salami", "chilli flakes"))
         ));
     }
 }
