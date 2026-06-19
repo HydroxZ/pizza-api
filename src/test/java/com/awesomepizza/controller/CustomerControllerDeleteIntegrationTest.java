@@ -5,15 +5,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.awesomepizza.domain.Order;
 import com.awesomepizza.domain.OrderStatus;
+import com.awesomepizza.domain.PizzaType;
+import com.awesomepizza.domain.Size;
 import com.awesomepizza.repository.OrderRepository;
 import com.awesomepizza.repository.PizzaTypeRepository;
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
 /**
@@ -32,7 +32,7 @@ class CustomerControllerDeleteIntegrationTest {
     @Autowired
     private PizzaTypeRepository pizzaTypeRepository;
 
-    private com.awesomepizza.domain.PizzaType persistedPizzaType;
+    private PizzaType persistedPizzaType;
 
     /**
      * Verify status changes from PENDING to CANCELLED after delete.
@@ -41,8 +41,8 @@ class CustomerControllerDeleteIntegrationTest {
     void deletePendingOrder_changesStatusToCancelled() throws Exception {
         // Create a pending order in the database
         persistDefaultPizzaType();
-        var order = new com.awesomepizza.domain.Order();
-        order.setSize(com.awesomepizza.domain.Size.MEDIUM);
+        var order = new Order();
+        order.setSize(Size.MEDIUM);
         order.setPizzaType(persistedPizzaType);
 
         var savedOrder = orderRepository.save(order);
@@ -68,8 +68,8 @@ class CustomerControllerDeleteIntegrationTest {
     @Test
     void deleteCancelledOrder_returns204() throws Exception {
         persistDefaultPizzaType();
-        var order = new com.awesomepizza.domain.Order();
-        order.setSize(com.awesomepizza.domain.Size.MEDIUM);
+        var order = new Order();
+        order.setSize(Size.MEDIUM);
         order.setPizzaType(persistedPizzaType);
 
         var savedOrder = orderRepository.save(order);
@@ -85,7 +85,7 @@ class CustomerControllerDeleteIntegrationTest {
 
     private void persistDefaultPizzaType() {
         if (persistedPizzaType == null) {
-            var pizzaType = com.awesomepizza.domain.PizzaType.createFromEntity(
+            var pizzaType = PizzaType.createFromEntity(
                     "MARGHERITA", "Classic tomato sauce and mozzarella",
                     java.math.BigDecimal.valueOf(12.99),
                     java.util.List.of("tomato", "mozzarella"));

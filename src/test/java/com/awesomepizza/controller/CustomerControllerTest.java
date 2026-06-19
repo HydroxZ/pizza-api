@@ -2,6 +2,7 @@ package com.awesomepizza.controller;
 
 import com.awesomepizza.domain.Order;
 import com.awesomepizza.domain.OrderStatus;
+import com.awesomepizza.domain.PizzaType;
 import com.awesomepizza.service.OrderService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +40,7 @@ class CustomerControllerTest {
 
   @BeforeEach
   void setUp() {
-    var pizzaType = com.awesomepizza.domain.PizzaType.valueOf("MARGHERITA");
+    var pizzaType = PizzaType.valueOf("MARGHERITA");
     savedOrder = new Order();
     savedOrder.setStatus(OrderStatus.PENDING);
     savedOrder.setPizzaType(pizzaType);

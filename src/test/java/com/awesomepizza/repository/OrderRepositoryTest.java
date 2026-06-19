@@ -3,6 +3,7 @@ package com.awesomepizza.repository;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import com.awesomepizza.domain.OrderStatus;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
 import org.junit.jupiter.api.Nested;
@@ -29,7 +30,7 @@ class OrderRepositoryTest {
         @Test
         void findFirstByStatusOrderByCreatedAt_returnsFirstPendingOrder() {
             var result = orderRepository.findFirstByStatusOrderByCreatedAt(
-                    com.awesomepizza.domain.OrderStatus.PENDING);
+                    OrderStatus.PENDING);
 
             assertThat(result).isNull();
         }
@@ -38,7 +39,7 @@ class OrderRepositoryTest {
         @CsvSource({ "-1", "0" })
         void countByStatus_returnsNonNegative(Long expectedCount) {
             var result = orderRepository.countByStatus(
-                    com.awesomepizza.domain.OrderStatus.PENDING);
+                    OrderStatus.PENDING);
 
             assertThat(result).isNotNull();
         }
